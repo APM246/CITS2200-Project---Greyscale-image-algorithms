@@ -6,63 +6,52 @@ public class MyProject implements Project {
 
     // could avoid use of isVisited by changing value in image array
     public int floodFillCount(int[][] image, int row, int col) {
-        int colour = image[row][col];
+        int[][] image_copy = image.clone();
+        int colour = image_copy[row][col];
         if (colour == 0) return 0;
         Stack<int[]> stack = new Stack<>();
-        int n_rows = image.length;
-        int n_cols = image[0].length;
-        boolean[][] isVisited = new boolean[n_rows][n_cols];
-
-        for (int i = 0; i < n_rows; i++) {
-            for (int j = 0; j < n_cols; j++) {
-                isVisited[i][j] = false;
-            }
-        }
+        int n_rows = image_copy.length;
+        int n_cols = image_copy[0].length;
 
         int count = 0;
         stack.push(new int[] {row, col});
+        image_copy[row][col] = 0;
 
         while (!stack.isEmpty()) {
             int[] pixel = stack.pop();
             int new_row = pixel[0]; int new_col = pixel[1];
+            count++;
+
             if (new_row > 0) {
-                if (!isVisited[new_row - 1][new_col] && image[new_row - 1][new_col] == colour) 
+                if (image_copy[new_row - 1][new_col] == colour) 
                 {
-                    image[new_row - 1][new_col] = 0;
-                    isVisited[new_row - 1][new_col] = true;
+                    image_copy[new_row - 1][new_col] = 0;
                     stack.push(new int[] {new_row - 1, new_col});
-                    count++;
                 }
             }
 
             if (new_row < n_rows - 1)
             {
-                if (!isVisited[new_row + 1][new_col] && image[new_row + 1][new_col] == colour) 
+                if (image_copy[new_row + 1][new_col] == colour) 
                 {
-                    image[new_row + 1][new_col] = 0;
-                    isVisited[new_row + 1][new_col] = true;
+                    image_copy[new_row + 1][new_col] = 0;
                     stack.push(new int[] {new_row + 1, new_col});
-                    count++;
                 }
             }
 
             if (new_col > 0) {
-                if (!isVisited[new_row][new_col - 1] && image[new_row][new_col - 1] == colour) 
+                if (image_copy[new_row][new_col - 1] == colour) 
                 {
-                    image[new_row][new_col - 1] = 0;
-                    isVisited[new_row][new_col - 1] = true;
+                    image_copy[new_row][new_col - 1] = 0;
                     stack.push(new int[] {new_row, new_col - 1});
-                    count++;
                 }
             }
 
             if (new_col < n_cols - 1) {
-                if (!isVisited[new_row][new_col + 1] && image[new_row][new_col + 1] == colour) 
+                if (image_copy[new_row][new_col + 1] == colour) 
                 {
-                    image[new_row][new_col + 1] = 0;
-                    isVisited[new_row][new_col + 1] = true;
+                    image_copy[new_row][new_col + 1] = 0;
                     stack.push(new int[] {new_row, new_col + 1});
-                    count++;
                 }
             }
         }
