@@ -186,7 +186,7 @@ public class SampleProjectUnitTest {
     public static void main(String[] args) {
         floodFillCountTest();
         brightestSquareTest();
-        //darkestPathTest();
+        darkestPathTest();
         //brightestPixelsInRowSegmentsTest();
 
         printSummary();

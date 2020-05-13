@@ -120,7 +120,12 @@ public class MyProject implements Project {
             end = 0;
             list_of_gaps = new LinkedList<Integer>();
             map = new int[size];
+            Arrays.fill(map, -1);
             Arrays.fill(heap, null);
+        }
+
+        public boolean contains(int element) {
+            return map[element] != -1;
         }
 
         public int dequeue() {
@@ -180,9 +185,11 @@ public class MyProject implements Project {
         private void heapifyDown() {
             int parent_index = 0;
             int child_index = 1;
-            while (child_index < heap.length) {
+            while (child_index < heap.length) { // issue 
                 int[] left = heap[child_index];
-                int[] right = heap[child_index + 1];
+                int[] right;
+                if (child_index + 1 >= heap.length) right = null;
+                else right = heap[child_index + 1];
                 if (left == null) {
                     // heapify property restored
                     if (right == null) break;
@@ -213,34 +220,51 @@ public class MyProject implements Project {
         }
     }
 
+    // don't really need to keep converting between column, row and single number, keep consistent, are two arrays necessary for
+    // comparison in while loop? 
     public int darkestPath(int[][] image, int ur, int uc, int vr, int vc) {
         int n_pixels = image.length*image[0].length;
         int n_rows = image.length;
         int n_cols = image[0].length;
+        int[] pixel_value = new int[n_pixels];
         int[] brightness_key = new int[n_pixels];
         int count = 0;
         for (int i = 0; i < n_rows; i++) {
             for (int j = 0; j < n_cols; j++) {
-                brightness_key[count++] = image[i][j];
+                pixel_value[count++] = image[i][j];
             }
         }
         
         PriorityQueueBlock pqueue = new PriorityQueueBlock(n_pixels);
-        for (int i = 0; i < n_pixels; i++)
+        for (int i = 0; i < n_pixels; i++) {
             pqueue.enqueue(i, Integer.MAX_VALUE);
-        
-        pqueue.changePriority((ur - 1)*n_cols + uc, brightness_key[(ur - 1)*n_cols + uc]);
-        pqueue.changePriority((vr - 1)*n_cols + vc, brightness_key[(vr - 1)*n_cols + vc]);
+            brightness_key[i] = Integer.MAX_VALUE;
+        }
+        pqueue.changePriority(ur*n_cols + uc, pixel_value[ur*n_cols + uc]);
+        brightness_key[ur*n_cols + uc] = pixel_value[ur*n_cols + uc];
+        //brightness_key[vr*n_cols + vc] = pixel_value[vr*n_cols + vc];
 
-        boolean isFound = false;
-
-        while (!isFound) {
+        //boolean isFound = false;
+        while (true) {
             int element = pqueue.dequeue();
-            // if()
+            if (element == vr*n_cols + vc) break;
+            // left, right, bottom and top in that order 
+            int[] neighbours = new int[] {element - 1, element + 1, element + n_cols, element - n_cols};
+
+            for (int neighbour: neighbours) {
+                if (neighbour >= 0 && neighbour < n_pixels) {
+                    if (pqueue.contains(neighbour)) {
+                        int max_brightness = Math.max(brightness_key[element], pixel_value[neighbour]);
+                        if (max_brightness < brightness_key[neighbour]) {
+                            brightness_key[neighbour] =  max_brightness;
+                            pqueue.changePriority(neighbour, max_brightness);
+                        }
+                    }
+                }
+            }
         }
 
-        
-        return -1;
+        return brightness_key[vr*n_cols + vc];
     }
 
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
