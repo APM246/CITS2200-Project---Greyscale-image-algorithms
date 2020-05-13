@@ -113,11 +113,13 @@ public class MyProject implements Project {
         private int[][] heap;
         private int end;
         private LinkedList<Integer> list_of_gaps;
+        private int[] map;
 
         public PriorityQueueBlock(int size) {
             heap = new int[size][2];
             end = 0;
             list_of_gaps = new LinkedList<Integer>();
+            map = new int[size];
             Arrays.fill(heap, null);
         }
 
@@ -136,11 +138,14 @@ public class MyProject implements Project {
             else index = list_of_gaps.remove();
         
             heap[index] = new int[] {element, priority};
+            map[element] = index;
             heapifyUp(index);
         }
 
-        public void changePriority(int element, int priority) {
-            
+        public void changePriority(int element, int brightness) {
+            int index = map[element];
+            heap[index][1] = brightness;
+            heapifyUp(index);
         }
 
         public void printArray() {
@@ -149,7 +154,6 @@ public class MyProject implements Project {
             }
         }
 
-        // avoid repeat calculations of child_brightness 
         private void heapifyUp(int index) {
             boolean isInPlace = false;
             int child_brightness = heap[index][1];
@@ -161,7 +165,11 @@ public class MyProject implements Project {
                 if (child_brightness < parent_brightness) {
                     int[] temp = heap[parent];
                     heap[parent] = heap[index];
+                    int child_element = heap[index][0];
+                    int parent_element = temp[0];
                     heap[index] = temp;
+                    map[child_element] = parent;
+                    map[parent_element] = index;
                     index = parent;
                 }
                 else isInPlace = true;
@@ -180,6 +188,7 @@ public class MyProject implements Project {
                     if (right == null) break;
                     else {
                         heap[parent_index] = right;
+                        map[right[0]] = parent_index;
                         heap[child_index + 1] = null;
                         parent_index = child_index + 1;
                     }
@@ -187,12 +196,14 @@ public class MyProject implements Project {
                 else {
                     if (right == null) {
                         heap[parent_index] = left;
+                        map[left[0]] = parent_index;
                         heap[child_index] = null;
                         parent_index = child_index;
                     }
                     else {
                         int index = (left[1] < right[1]) ? child_index: child_index + 1;
                         heap[parent_index] = heap[index];
+                        map[heap[index][0]] = parent_index;
                         heap[index] = null;
                         parent_index = index;
                     }
@@ -203,12 +214,31 @@ public class MyProject implements Project {
     }
 
     public int darkestPath(int[][] image, int ur, int uc, int vr, int vc) {
-        PriorityQueueBlock pqueue = new PriorityQueueBlock(7);
-            for (int i = 0; i < 7; i++)
-            pqueue.enqueue(i, 10-i);
-        pqueue.dequeue();
-        pqueue.printArray();
+        int n_pixels = image.length*image[0].length;
+        int n_rows = image.length;
+        int n_cols = image[0].length;
+        int[] brightness_key = new int[n_pixels];
+        int count = 0;
+        for (int i = 0; i < n_rows; i++) {
+            for (int j = 0; j < n_cols; j++) {
+                brightness_key[count++] = image[i][j];
+            }
+        }
         
+        PriorityQueueBlock pqueue = new PriorityQueueBlock(n_pixels);
+        for (int i = 0; i < n_pixels; i++)
+            pqueue.enqueue(i, Integer.MAX_VALUE);
+        
+        pqueue.changePriority((ur - 1)*n_cols + uc, brightness_key[(ur - 1)*n_cols + uc]);
+        pqueue.changePriority((vr - 1)*n_cols + vc, brightness_key[(vr - 1)*n_cols + vc]);
+
+        boolean isFound = false;
+
+        while (!isFound) {
+            int element = pqueue.dequeue();
+            // if()
+        }
+
         
         return -1;
     }
