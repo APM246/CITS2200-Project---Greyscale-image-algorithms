@@ -248,7 +248,7 @@ public class MyProject implements Project {
         while (true) {
             int element = pqueue.dequeue();
             if (element == vr*n_cols + vc) break;
-            // left, right, bottom and top in that order 
+            // left, right, bottom and top neighbours in that order 
             int[] neighbours = new int[] {element - 1, element + 1, element + n_cols, element - n_cols};
 
             for (int neighbour: neighbours) {
@@ -263,11 +263,22 @@ public class MyProject implements Project {
                 }
             }
         }
-
         return brightness_key[vr*n_cols + vc];
     }
 
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
-        return null;
+        int[] result = new int[queries.length];
+        for (int j = 0; j < queries.length; j++) {
+            int max = 0;
+            int row = queries[j][0];
+            int left = queries[j][1];
+            int right = queries[j][2];
+            for (int i = left; i < right; i++) {
+                if (image[row][i] > max) max = image[row][i];
+            }
+            result[j] = max;
+        }
+
+        return result;
     }
 }

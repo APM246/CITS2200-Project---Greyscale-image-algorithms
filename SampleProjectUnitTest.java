@@ -187,7 +187,7 @@ public class SampleProjectUnitTest {
         floodFillCountTest();
         brightestSquareTest();
         darkestPathTest();
-        //brightestPixelsInRowSegmentsTest();
+        brightestPixelsInRowSegmentsTest();
 
         printSummary();
     }
