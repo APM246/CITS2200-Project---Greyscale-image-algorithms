@@ -93,8 +93,8 @@ public class MyProject implements Project {
         int n_rows = image.length;
         int n_cols = image[0].length;
         int[][] row_sums = new int[n_rows][n_cols - k + 1];
-
-        // Calculate sum of elements in sub-row of length k starting at index 0
+        // row_sums will contain sums of subarrays of length k in each row. There are n_cols - k + 1 possible subarrays of length k in each row 
+        // Start with subarray starting at index 0 of the row
         for (int i = 0; i < n_rows; i++) {
             int row_sum = 0;
             for (int j = 0; j < k; j++) {
@@ -105,31 +105,32 @@ public class MyProject implements Project {
 
             // Now caclulate the sum of the other subrows of length k within the same row (progress by 1 index each time)
             // To save time, remove earliest element from row_sum and add latest element 
-            for (int j = 1; j < row_sums[0].length; j++) {
+            for (int j = 1; j < n_cols - k + 1; j++) {
                 row_sum += image[i][j + k - 1] - image[i][j-1];
                 row_sums[i][j] = row_sum;
             }
-            // Move to next row 
+            // Move onto next row 
         }
 
         int max_sum = 0;
         // Calculate sum of every possible k*k square and keep track of maximum sum
-        // Initially calculate left-upper most square and then move down by one row each time. 
-        // Move onto next column once all rows covered.
+        // Start with squares where left-most column is column 0. Start at row 0 and progress by 1 index each time. 
+        // Move onto next left-most column once all rows covered for a given column.
         for (int i = 0; i < n_cols - k + 1; i++) {
             int current_sum = 0;
-            // In this loop calculate the sum of square with top left corner at row 0 and column fixed
+            // Calculate the sum of square where the top-most row is row 0
             for (int j = 0; j < k; j++) {
                 current_sum += row_sums[j][i];
             }
 
             max_sum = Math.max(current_sum, max_sum);
-            // Calculate sum of rest of squares whose top-left corner is in the same column
+            // Calculate sum of rest of squares with the same left-most column by moving downwards
             // To save time remove top row and add bottom row 
             for (int m = 1; m < n_rows - k + 1; m++) {
                 current_sum += row_sums[m + k - 1][i] - row_sums[m - 1][i];
                 max_sum = Math.max(current_sum, max_sum);
             }
+            // move to next left-most column
         }
 
         return max_sum;

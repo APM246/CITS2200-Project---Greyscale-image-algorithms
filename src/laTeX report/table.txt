@@ -1,0 +1,5 @@
+\begin{tabular}{|c | c | c|}
+      	\hline 
+      	a1+a2+a3+b1+\newline b2+b3+c1+c2+c3 & a2+a3+a4+b2+b3+b4+c2+c3+c4 & a3+a4+a5+b3+\newline b4+b5+c3+c4+c5\\ \hline
+      	b1+b2+b3+c1+c2+c3+d1+d2+d3 & $$b2+b3+b4+c2+\\c3+c4+d2+d3+d4$$ & b3+b4+b5+c3+\\c4+c5+d3+d4+d5\\ \hline
+      \end{tabular} \newline \newline

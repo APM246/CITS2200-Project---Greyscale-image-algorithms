@@ -3,6 +3,29 @@
 \title{CITS2200 Project Report}
 \usepackage{amsmath}
 \usepackage[big]{titlesec}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amssymb}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=Java,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
 \begin{document}
 	\maketitle
 	\newpage
@@ -32,9 +55,77 @@
      
      \section{Brightest Square}
      \subsection*{Explanation} 
-     
-     
-     
+     The algorithm starts by finding the sum of every possible subarray of length k in each row and placing the sums in a 2-dimensional integer array \textit{row\_sums}.\newline \newline
+     \begin{tabular}{|c | c | c | c | c|}
+     	\hline
+     	a1 & a2 & a3 & a4 & a5\\ \hline
+     	b1 & b2 & b3 & b4 & b5 \\ \hline
+     	c1 & c2 & c3 & c4 & c5\\ \hline
+     	d1 & d2 & d3 & d4 & d5\\ \hline
+     \end{tabular}
+     $\longrightarrow$
+     \begin{tabular}{|c | c | c|}
+     	\hline
+     	a1+a2+a3 & a2+a3+a4 & a3+a4+a5 \\ \hline
+     	b1+b2+b3 & b2+b3+b4 & b3+b4+b5 \\ \hline
+     	c1+c2+c3 & c2+c3+c4 & c3+c4+c5 \\ \hline
+     	d1+d2+d3 & d2+d3+d4 & d3+d4+d5 \\ \hline
+     \end{tabular} \newline \newline
+      It then finds the sum of every possible subcolumn of length k from each column in \textit{row\_sums}. The maximum of these sums is the brightness of the brightest square and is the returned answer. \newline
+   	  $$max(\sum\limits_{i=0}^{C-1}\sum\limits_{n=0}^{C-k+1}\sum\limits_{j=n}^{k+n-1} row\_sums[j][i])\newline$$
+   	  
+       This is because the sum of each subcolumn represents the sum of one k*k square in the image. For example, the sum of the first subcolumn (row 0 to k-1) in the left-most column of row\_sums would represent the sum of the top-left most square, the sum of the 2nd subcolumn (row 1 to k) would represent the square one row below, and so on.\newline
+       
+       The algorithm is correct because it works under the same principle as a brute force solution, i.e. it finds the sum of every possible k*k square and returns the largest sum.
+       
+       \subsection*{Time Complexity Analysis}
+       The algorithm is broken down into main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline \newline \newline \newline
+       \begin{lstlisting}
+       	for (int i = 0; i < n_rows; i++) {
+       		int row_sum = 0;
+       		for (int j = 0; j < k; j++) row_sum += image[i][j];
+       		
+       		row_sums[i][0] = row_sum;
+       		for (int j = 1; j < n_cols - k + 1; j++) {
+       			row_sum += image[i][j + k - 1] - image[i][j-1];
+       			row_sums[i][j] = row_sum;
+       		}
+       	}
+       	\end{lstlisting}
+       
+       \begin{equation}
+       \begin{aligned}
+       time_1 &= R(k + (C-k))\\
+       &= R*C\\
+       &= \textbf{O(p)}
+       \end{aligned}
+       \end{equation}
+       
+       In the 2nd stage: 
+       \begin{lstlisting}
+       for (int i = 0; i < n_cols - k + 1; i++) {
+       	int current_sum = 0;
+       	for (int j = 0; j < k; j++) current_sum += row_sums[j][i];
+       	
+       	max_sum = Math.max(current_sum, max_sum);
+       	for (int m = 1; m < n_rows - k + 1; m++) {
+       		current_sum += row_sums[m + k - 1][i]-row_sums[m - 1][i];
+       		max_sum = Math.max(current_sum, max_sum);
+       	}
+       }
+       \end{lstlisting}
+       
+       \begin{equation}
+       \begin{aligned}
+       time_2 &= (C-k+1)(k + (R-k))\\
+       &= (C-k+1) \times R \\
+       &=O(RC)\\
+       &= \textbf{O(p)}
+       \end{aligned}
+       \end{equation}
+       
+       Both stages of the algorithm are \textbf{O(p)}.\\
+       $\therefore$ the algorithm's overall complexity is \textbf{O(p)}
        
      \end{flushleft}
 	
