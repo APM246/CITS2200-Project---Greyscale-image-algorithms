@@ -79,7 +79,7 @@
        The algorithm is correct because it works under the same principle as a brute force solution, i.e. it finds the sum of every possible k*k square and returns the largest sum.
        
        \subsection*{Time Complexity Analysis}
-       The algorithm is broken down into main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline \newline \newline \newline
+       The algorithm is broken down into 2 main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline \newline \newline \newline
        \begin{lstlisting}
        	for (int i = 0; i < n_rows; i++) {
        		int row_sum = 0;
@@ -125,7 +125,15 @@
        \end{equation}
        
        Both stages of the algorithm are \textbf{O(p)}.\\
-       $\therefore$ the algorithm's overall complexity is \textbf{O(p)}
+       $\therefore$ the algorithm's overall complexity is \textbf{O(p)} \newpage
+       
+       \section{Appendix}
+       \begin{thebibliography}{9}
+    	\bibitem{geeksforgeeks} 
+    	GeeksforGeeks A computer science portal for geeks
+    	\\\texttt{https://www.geeksforgeeks.org/print-maximum-sum-square-sub-matrix
+    		-of-given-size/}
+       	\end{thebibliography}
        
      \end{flushleft}
 	
