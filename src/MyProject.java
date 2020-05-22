@@ -83,7 +83,7 @@ public class MyProject implements Project {
     }
 
     /**
-     * Uses a modified version of Kadane's algorithm to find the brightest
+     * An implementation inspired by Kadane's algorithm to find the brightest
      * square. 
      * @param image The greyscale image as defined above
      * @param k the dimension of the squares to consider
