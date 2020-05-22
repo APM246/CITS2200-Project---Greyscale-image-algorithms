@@ -1,65 +1,94 @@
+/**
+ * REMOVE src package
+ */
+// Arun Muthu (22704805)
+package src;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Stack;
 
+/**
+ * Class that implements the 4 algorithms outlined in the Project interface
+ */
 public class MyProject implements Project {
 
+    /**
+     * Creates an instance of MyProject that can execute the 4 algorithms
+     */
     public MyProject() {}
 
+    /**
+     * Uses a depth-first search to perform a floodFillCount
+     * @param image The greyscale image as defined above
+     * @param row The row index of the pixel to flood-fill from
+     * @param col The column index of the pixel to flood-fill from
+     * @return The number of pixels that changed colour when performing this operation
+     */
     public int floodFillCount(int[][] image, int row, int col) {
-        int[][] image_copy = image.clone();
-        int colour = image_copy[row][col];
-        if (colour == 0) return 0;
+        int colour = image[row][col];
+        if (colour == 0) return 0; // pixel and contiguous neighbours are already black thus no conversion needed 
         Stack<int[]> stack = new Stack<>();
-        int n_rows = image_copy.length;
-        int n_cols = image_copy[0].length;
+        int n_rows = image.length;
+        int n_cols = image[0].length;
 
         int count = 0;
         stack.push(new int[] {row, col});
-        image_copy[row][col] = 0;
+        image[row][col] = 0;
 
         while (!stack.isEmpty()) {
             int[] pixel = stack.pop();
             int new_row = pixel[0]; int new_col = pixel[1];
-            count++;
 
+            // Add pixel above if possible 
             if (new_row > 0) {
-                if (image_copy[new_row - 1][new_col] == colour) 
+                if (image[new_row - 1][new_col] == colour) 
                 {
-                    image_copy[new_row - 1][new_col] = 0;
+                    image[new_row - 1][new_col] = 0;
                     stack.push(new int[] {new_row - 1, new_col});
                 }
             }
 
+            // Add pixel below if possible 
             if (new_row < n_rows - 1)
             {
-                if (image_copy[new_row + 1][new_col] == colour) 
+                if (image[new_row + 1][new_col] == colour) 
                 {
-                    image_copy[new_row + 1][new_col] = 0;
+                    image[new_row + 1][new_col] = 0;
                     stack.push(new int[] {new_row + 1, new_col});
                 }
             }
 
+            // Add left pixel if possible 
             if (new_col > 0) {
-                if (image_copy[new_row][new_col - 1] == colour) 
+                if (image[new_row][new_col - 1] == colour) 
                 {
-                    image_copy[new_row][new_col - 1] = 0;
+                    image[new_row][new_col - 1] = 0;
                     stack.push(new int[] {new_row, new_col - 1});
                 }
             }
 
+            // Add right pixel if possible 
             if (new_col < n_cols - 1) {
-                if (image_copy[new_row][new_col + 1] == colour) 
+                if (image[new_row][new_col + 1] == colour) 
                 {
-                    image_copy[new_row][new_col + 1] = 0;
+                    image[new_row][new_col + 1] = 0;
                     stack.push(new int[] {new_row, new_col + 1});
                 }
             }
+
+            count++; // pixel has now been processed, hence increase count
         }
 
         return count;
     }
 
+    /**
+     * Uses a modified version of Kadane's algorithm to find the brightest
+     * square. 
+     * @param image The greyscale image as defined above
+     * @param k the dimension of the squares to consider
+     * @return The total brightness of the brightest square
+     */
     public int brightestSquare(int[][] image, int k) {
         int n_rows = image.length;
         int n_cols = image[0].length;
@@ -106,6 +135,9 @@ public class MyProject implements Project {
         return max_sum;
     }
 
+    /**
+     * 
+     */
     private class PriorityQueueBlock {
         /**
          * Each sub-array stores the element and its priority 
@@ -130,6 +162,16 @@ public class MyProject implements Project {
 
         public int dequeue() {
             int temp = heap[0][0];
+            // start from top and call heapify() at each level
+            /*int current_node = 0;
+            heap[current_node][1] = Integer.MAX_VALUE;
+            while (2*current_node + 2 < end) {
+                int left_child = 2*current_node + 1;
+                int right_child = left_child + 1;
+                current_node = (heap[left_child][1] < heap[right_child][1]) ? left_child : right_child; 
+                heapifyUp(current_node);
+            }
+            map[current_node] = -1;*/
             heapifyDown();
             return temp;
         }
