@@ -181,8 +181,7 @@ public class MyProject implements Project {
          * @return the value of the top element 
          */
         public int dequeue() {
-            int temp = heap[0][0];
-            heap_position[temp] = -1; // no longer in priority queue 
+            int temp = heap[0][0]; 
             heapifyDown();
             return temp;
         }
@@ -239,39 +238,20 @@ public class MyProject implements Project {
 
         // exclusively called by dequeue()
         private void heapifyDown() {
+            int[] head = heap[0];
+            head[1] = Integer.MAX_VALUE; 
+            heap_position[head[0]] = -1; // no longer in priority queue
             int parent_index = 0;
             int child_index = 1;
             while (child_index < heap.length) {
-                int[] left = heap[child_index];
-                int[] right;
-                if (child_index + 1 >= heap.length) right = null;
-                else right = heap[child_index + 1];
-                if (left == null) {
-                    // heapify property restored
-                    if (right == null) break;
-                    else {
-                        heap[parent_index] = right;
-                        heap_position[right[0]] = parent_index;
-                        heap[child_index + 1] = null;
-                        parent_index = child_index + 1;
-                    }
-                }
-                else {
-                    if (right == null) {
-                        heap[parent_index] = left;
-                        heap_position[left[0]] = parent_index;
-                        heap[child_index] = null;
-                        parent_index = child_index;
-                    }
-                    else {
-                        int index = (left[1] < right[1]) ? child_index: child_index + 1;
-                        heap[parent_index] = heap[index];
-                        heap_position[heap[index][0]] = parent_index;
-                        heap[index] = null;
-                        parent_index = index;
-                    }
-                }
-                child_index = 2*parent_index + 1;
+                int index;
+                if (child_index + 1 >= heap.length) index = child_index;
+                else index = (heap[child_index][1] < heap[child_index + 1][1]) ? child_index: child_index + 1;
+                heap[parent_index] = heap[index];
+                heap_position[heap[index][0]] = parent_index;
+                heap[index] = head;
+                parent_index = index;
+                child_index = 2*parent_index + 1; // move down to next level 
             }
         }
     }

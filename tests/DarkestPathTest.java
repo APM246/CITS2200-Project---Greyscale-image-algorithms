@@ -6,7 +6,7 @@ import java.lang.System;
 
 public class DarkestPathTest {
 
-    public static int numAutomatedTests = 110;
+    public static int numAutomatedTests = 6000;
     public static int numTests = 0;
     public static int numPassed = 0;
 
@@ -24,7 +24,7 @@ public class DarkestPathTest {
 
     public static void runSimpleTests(Project proj, int count) {
         Random rand = new Random();
-        int maxSize = 1512;
+        int maxSize = 912;
         for (int i = 0; i < count; i++) {
             int rows = rand.nextInt(maxSize - 1) + 2;
             int cols = rand.nextInt(maxSize - 1) + 2;
