@@ -155,7 +155,8 @@ public class MyProject implements Project {
         private int[] heap_position; 
 
         /**
-         * All elements in map will be initialised to -1 and changed to 1 when the matching vertex is enqueued. 
+         * All elements in map will be initialised to -1 and changed to appropriate value when they are enqueued 
+         * or re-enqueued. 
          * @param size the bounded size of the priority queue
          */
         public PriorityQueueBlock(int size) {
@@ -181,7 +182,7 @@ public class MyProject implements Project {
          */
         public int dequeue() {
             int temp = heap[0][0];
-            heap_position[temp] = -1;
+            heap_position[temp] = -1; // no longer in priority queue 
             heapifyDown();
             return temp;
         }
@@ -240,7 +241,7 @@ public class MyProject implements Project {
         private void heapifyDown() {
             int parent_index = 0;
             int child_index = 1;
-            while (child_index < heap.length) { // issue 
+            while (child_index < heap.length) {
                 int[] left = heap[child_index];
                 int[] right;
                 if (child_index + 1 >= heap.length) right = null;
