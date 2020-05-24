@@ -9,7 +9,6 @@
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
-
 \lstset{frame=tb,
 	language=Java,
 	aboveskip=3mm,
@@ -33,7 +32,7 @@
 	\newpage
     %\part*{1) floodFillCount} 
     \section{FloodFill Count}
-    \subsection*{Explanation}
+    \subsection*{Correctness}
     \begin{flushleft}
     floodFillCount uses a non-recursive depth-first search to search for every contiguous pixel matching the brightness of the original pixel. The inductive step is as follows: \newline\newline
     \textit{Remove the top-most pixel from the stack and check the pixels above, below, left and right. For any pixel that matches the brightness of the original pixel, convert it to black and push it onto the stack. Increase the count by 1 after this is done.} \newline
@@ -54,7 +53,7 @@
      Hence floodFillCount's worst-case complexity is \textbf{O(p)}.   
      
      \section{Brightest Square}
-     \subsection*{Explanation} 
+     \subsection*{Correctness} 
      The algorithm starts by finding the sum of every possible subarray of length k in each row and placing the sums in a 2-dimensional integer array \textit{row\_sums}.\newline \newline
      \begin{tabular}{|c | c | c | c | c|}
      	\hline
@@ -79,7 +78,7 @@
        The algorithm is correct because it works under the same principle as a brute force solution, i.e. it finds the sum of every possible k*k square and returns the largest sum.
        
        \subsection*{Time Complexity Analysis}
-       The algorithm is broken down into 2 main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline \newline \newline \newline
+       The algorithm is broken down into 2 main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline
        \begin{lstlisting}
        	for (int i = 0; i < n_rows; i++) {
        		int row_sum = 0;
@@ -120,15 +119,25 @@
        &=O(RC)\\
        &= \textbf{O(p)}
        \end{aligned}
-       \end{equation}
+       \end{equation}\newline
        
        Both stages are \textbf{O(p)}. $\therefore$ the algorithm's overall complexity is \textbf{O(p)}. The reason for the improved time efficiency compared to a brute force solution is mainly attributed to the way sums of subarrays and subcolumns are calculated. Instead of performing repetitive additions, the earliest element is subtracted from and the latest element is added to the previous sum.  
     
-		a path is defined by the brightest pixel it contains, thus when adding a new pixel there is two possible outcomes. Either the pixel contributes
-		to the path by being brighter and thus redefining the path's brightest pixel or the pixel is darker than the brightest pixel encountered
-		and thus joins the path without affecting anything else. Due to the nature of a priority first search, the algorithm will prioritise
-		darker pixels and thus find the darkest possible path from (ur, uc) to (vr, vc). 
-
+       \newpage 
+       \section{Darkest Path}
+       \subsection*{Correctness}
+       The Darkest Path algorithm uses a Priority First Search to find the darkest path. The essence of the 
+       search is based on one property. The brightness of a path is defined by the brightest pixel it contains. Therefore, when examining a new pixel to add to the path, there are two possible outcomes. Either the pixel redefines the path's brightest pixel by being brighter than the brightest pixel encountered thus far or the pixel joins the path without affecting this property. This is seen with the conditional statement:\newline
+       \begin{lstlisting}
+       int max_brightness = Math.max(brightness_key[element], image[neighbour/n_cols][neighbour%n_cols]);
+    
+       if (max_brightness < brightness_key[neighbour]) {
+           brightness_key[neighbour] =  max_brightness;
+           pqueue.changePriority(neighbour, max_brightness);
+       }
+       \end{lstlisting}
+        Hence the key array in the algorithm always contains an upper bound on the lowest brightness a pixel has encountered. Due to the nature of a priority first search algorithm whereby higher priority elements (darker pixels) are dequeued first from the priority queue, the algorithm is guaranteed to construct a tree which emphasises on darkest paths. Once (vr, vc) is dequeued from the heap, 
+        its upper bound will have converged to the lowest possible value and is therefore returned. 
 
         \newpage   
        \section{Appendix}
@@ -136,7 +145,7 @@
     	\bibitem{geeksforgeeks} 
     	GeeksforGeeks A computer science portal for geeks
     	\\\texttt{https://www.geeksforgeeks.org/print-maximum-sum-square-sub-matrix
-    		-of-given-size/}
+    	-of-given-size/}
        	\end{thebibliography}
        
      \end{flushleft}
