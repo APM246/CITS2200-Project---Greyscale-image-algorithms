@@ -137,71 +137,83 @@ public class MyProject implements Project {
     }
 
     /**
-     * 
+     * A custom heap implementation of a Priority Queue to be used in darkestPath(), a modified version
+     * of Dijkstra's algorithm. 
      */
     private class PriorityQueueBlock {
         /**
-         * Each sub-array stores the element and its priority 
+         * Each sub-array stores the element and its priority (brightness). The lower the brightness, 
+         * the higher the priority. 
          */
         private int[][] heap;
-        private int end;
-        private LinkedList<Integer> list_of_gaps;
-        private int[] map;
+        private int n_elements; // number of elements currently stored in priority queue 
+        /**
+         * Allows for efficient implementations of contains() and changePriority(). Each index in the array
+         * represents the corresponding element (in order of when they were enqueued). heap_position stores
+         * each element's position in the heap. A -1 is stored if the element is currently not in the priority queue. 
+         */
+        private int[] heap_position; 
 
+        /**
+         * All elements in map will be initialised to -1 and changed to 1 when the matching vertex is enqueued. 
+         * @param size the bounded size of the priority queue
+         */
         public PriorityQueueBlock(int size) {
             heap = new int[size][2];
-            end = 0;
-            list_of_gaps = new LinkedList<Integer>();
-            map = new int[size];
-            Arrays.fill(map, -1);
+            n_elements = 0;
+            heap_position = new int[size];
+            Arrays.fill(heap_position, -1);
             Arrays.fill(heap, null);
         }
 
+        /**
+         * Checks if an element is in the priority queue
+         * @param element the element to be checked. 
+         * @return true iff the element is currently in the priority queue
+         */
         public boolean contains(int element) {
-            return map[element] != -1;
+            return heap_position[element] != -1;
         }
 
+        /**
+         * Removes the top element from the priority queue 
+         * @return the value of the top element 
+         */
         public int dequeue() {
             int temp = heap[0][0];
-            // start from top and call heapify() at each level
-            /*int current_node = 0;
-            heap[current_node][1] = Integer.MAX_VALUE;
-            while (2*current_node + 2 < end) {
-                int left_child = 2*current_node + 1;
-                int right_child = left_child + 1;
-                current_node = (heap[left_child][1] < heap[right_child][1]) ? left_child : right_child; 
-                heapifyUp(current_node);
-            }
-            map[current_node] = -1;*/
+            heap_position[temp] = -1;
             heapifyDown();
             return temp;
         }
 
+        /**
+         * Adds an element to the priority queue
+         * @param element the element to be added
+         * @param priority the priority (brightness) of the element 
+         */
         public void enqueue(int element, int priority) {
-            int index;
-            if (list_of_gaps.isEmpty()) {
-                index = end;
-                end++;
-            }
-            else index = list_of_gaps.remove();
-        
+            int index = n_elements;
+            n_elements++;
             heap[index] = new int[] {element, priority};
-            map[element] = index;
+            heap_position[element] = index;
             heapifyUp(index);
         }
 
+        /**
+         * Changes the priority of an element and re-adjusts its position in the heap if necessary
+         * @param element the element to change
+         * @param brightness the new priority to be assigned to the element 
+         */
         public void changePriority(int element, int brightness) {
-            int index = map[element];
+            int index = heap_position[element];
             heap[index][1] = brightness;
             heapifyUp(index);
         }
 
-        public void printArray() {
-            for (int[] row: heap) {
-                System.out.println(Arrays.toString(row));
-            }
-        }
-
+        /**
+         * 
+         * @param index
+         */
         private void heapifyUp(int index) {
             boolean isInPlace = false;
             int child_brightness = heap[index][1];
@@ -216,8 +228,8 @@ public class MyProject implements Project {
                     int child_element = heap[index][0];
                     int parent_element = temp[0];
                     heap[index] = temp;
-                    map[child_element] = parent;
-                    map[parent_element] = index;
+                    heap_position[child_element] = parent;
+                    heap_position[parent_element] = index;
                     index = parent;
                 }
                 else isInPlace = true;
@@ -238,7 +250,7 @@ public class MyProject implements Project {
                     if (right == null) break;
                     else {
                         heap[parent_index] = right;
-                        map[right[0]] = parent_index;
+                        heap_position[right[0]] = parent_index;
                         heap[child_index + 1] = null;
                         parent_index = child_index + 1;
                     }
@@ -246,14 +258,14 @@ public class MyProject implements Project {
                 else {
                     if (right == null) {
                         heap[parent_index] = left;
-                        map[left[0]] = parent_index;
+                        heap_position[left[0]] = parent_index;
                         heap[child_index] = null;
                         parent_index = child_index;
                     }
                     else {
                         int index = (left[1] < right[1]) ? child_index: child_index + 1;
                         heap[parent_index] = heap[index];
-                        map[heap[index][0]] = parent_index;
+                        heap_position[heap[index][0]] = parent_index;
                         heap[index] = null;
                         parent_index = index;
                     }
@@ -263,8 +275,7 @@ public class MyProject implements Project {
         }
     }
 
-    // don't really need to keep converting between column, row and single number, keep consistent, are two arrays necessary for
-    // comparison in while loop? 
+    // don't really need to keep converting between column, row and single number
     public int darkestPath(int[][] image, int ur, int uc, int vr, int vc) {
         int n_pixels = image.length*image[0].length;
         int n_rows = image.length;
@@ -285,14 +296,16 @@ public class MyProject implements Project {
         }
         pqueue.changePriority(ur*n_cols + uc, pixel_value[ur*n_cols + uc]);
         brightness_key[ur*n_cols + uc] = pixel_value[ur*n_cols + uc];
-        //brightness_key[vr*n_cols + vc] = pixel_value[vr*n_cols + vc];
 
-        //boolean isFound = false;
         while (true) {
             int element = pqueue.dequeue();
             if (element == vr*n_cols + vc) break;
-            // left, right, bottom and top neighbours in that order 
-            int[] neighbours = new int[] {element - 1, element + 1, element + n_cols, element - n_cols};
+            // adding right, left, top and bottom neighbours in that order if possible
+            LinkedList<Integer> neighbours = new LinkedList<>();
+            if (element % n_cols != n_cols - 1) neighbours.add(element + 1);
+            if (element % n_cols != 0) neighbours.add(element - 1);
+            if (element / n_cols != n_rows - 1) neighbours.add(element + n_cols);
+            if (element / n_cols != 0) neighbours.add(element - n_cols);
 
             for (int neighbour: neighbours) {
                 if (neighbour >= 0 && neighbour < n_pixels) {

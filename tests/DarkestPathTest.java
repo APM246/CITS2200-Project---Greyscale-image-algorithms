@@ -2,10 +2,11 @@ package tests;
 import src.*;
 import java.util.Random;
 import java.util.Arrays;
+import java.lang.System;
 
 public class DarkestPathTest {
 
-    public static int numAutomatedTests = 100;
+    public static int numAutomatedTests = 6000;
     public static int numTests = 0;
     public static int numPassed = 0;
 
@@ -171,10 +172,10 @@ public class DarkestPathTest {
 
     public static void main(String[] args) {
         Project project = new MyProject();
-
-        runDefaultTests(project);
+        long start = System.currentTimeMillis();
+        //runDefaultTests(project);
         runSimpleTests(project, numAutomatedTests);
-
+        System.out.println(System.currentTimeMillis() - start);
         System.out.println("Passed " + numPassed + "/" + numTests + " tests");
     }
 }
