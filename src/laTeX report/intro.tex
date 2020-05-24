@@ -124,6 +124,12 @@
        
        Both stages are \textbf{O(p)}. $\therefore$ the algorithm's overall complexity is \textbf{O(p)}. The reason for the improved time efficiency compared to a brute force solution is mainly attributed to the way sums of subarrays and subcolumns are calculated. Instead of performing repetitive additions, the earliest element is subtracted from and the latest element is added to the previous sum.  
     
+		a path is defined by the brightest pixel it contains, thus when adding a new pixel there is two possible outcomes. Either the pixel contributes
+		to the path by being brighter and thus redefining the path's brightest pixel or the pixel is darker than the brightest pixel encountered
+		and thus joins the path without affecting anything else. Due to the nature of a priority first search, the algorithm will prioritise
+		darker pixels and thus find the darkest possible path from (ur, uc) to (vr, vc). 
+
+
         \newpage   
        \section{Appendix}
        \begin{thebibliography}{9}

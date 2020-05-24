@@ -175,7 +175,7 @@ public class DarkestPathTest {
         long start = System.currentTimeMillis();
         runDefaultTests(project);
         runSimpleTests(project, numAutomatedTests);
-        System.out.println(System.currentTimeMillis() - start);
+        System.out.println(System.currentTimeMillis() - start + "seconds");
         System.out.println("Passed " + numPassed + "/" + numTests + " tests");
     }
 }

@@ -3,8 +3,9 @@
  */
 // Arun Muthu (22704805)
 package src;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Stack;
 
 /**
@@ -140,7 +141,7 @@ public class MyProject implements Project {
      * A custom heap implementation of a Priority Queue to be used in darkestPath(), a modified version
      * of Dijkstra's algorithm. 
      */
-    private class PriorityQueueBlock {
+    private class PriorityQueueHeap {
         /**
          * Each sub-array stores the element and its priority (brightness). The lower the brightness, 
          * the higher the priority. 
@@ -159,7 +160,7 @@ public class MyProject implements Project {
          * or re-enqueued. 
          * @param size the bounded size of the priority queue
          */
-        public PriorityQueueBlock(int size) {
+        public PriorityQueueHeap(int size) {
             heap = new int[size][2];
             n_elements = 0;
             heap_position = new int[size];
@@ -187,7 +188,8 @@ public class MyProject implements Project {
         }
 
         /**
-         * Adds an element to the priority queue
+         * Adds an element to the priority queue. Enqueue is only called once to construct
+         * the priority queue and thus heapify() is not needed here. 
          * @param element the element to be added
          * @param priority the priority (brightness) of the element 
          */
@@ -196,7 +198,6 @@ public class MyProject implements Project {
             n_elements++;
             heap[index] = new int[] {element, priority};
             heap_position[element] = index;
-            heapifyUp(index);
         }
 
         /**
@@ -211,18 +212,21 @@ public class MyProject implements Project {
         }
 
         /**
-         * 
-         * @param index
+         * Called exclusively by changePriority(). Starts at the element whose priority has just been 
+         * changed and works upwards. At each level, the child is exchanged with the parent if it has a
+         * better priority (lower brightness)
+         * @param index the index of the element whose priority has been changed 
          */
         private void heapifyUp(int index) {
-            boolean isInPlace = false;
+            boolean isInPlace = false; // set to true once element cannot be placed any higher in the tree 
             int child_brightness = heap[index][1];
             while (index != 0 && !isInPlace) {
-                int parent = (index - 1)/2;
+                int parent = (index - 1)/2; // move up
                 int parent_brightness = heap[parent][1];
 
                 // lower brightness has higher priority 
                 if (child_brightness < parent_brightness) {
+                    // perform switch 
                     int[] temp = heap[parent];
                     heap[parent] = heap[index];
                     int child_element = heap[index][0];
@@ -236,71 +240,84 @@ public class MyProject implements Project {
             }
         }
 
-        // exclusively called by dequeue()
+        /**
+         * Exclusively called by dequeue(). Start at the top of the priority queue
+         * and set the element's priority to infinity. Repeated step: switch the node with
+         * either the left or right child depending on priority. Repeat at
+         * each level until the top element has reached the bottom. 
+         * Note: child_index == left child, child_index + 1 == right child
+         */
         private void heapifyDown() {
-            int[] head = heap[0];
-            head[1] = Integer.MAX_VALUE; 
+            int[] head = heap[0]; // dequeued element 
+            head[1] = Integer.MAX_VALUE;
             heap_position[head[0]] = -1; // no longer in priority queue
             int parent_index = 0;
             int child_index = 1;
             while (child_index < heap.length) {
                 int index;
-                if (child_index + 1 >= heap.length) index = child_index;
+                if (child_index + 1 >= heap.length) index = child_index; // right node doesn't exist 
+                // Compare children, darker pixel will move up whilst other child remains unchanged 
                 else index = (heap[child_index][1] < heap[child_index + 1][1]) ? child_index: child_index + 1;
                 heap[parent_index] = heap[index];
                 heap_position[heap[index][0]] = parent_index;
                 heap[index] = head;
+
+                // move down to next level 
                 parent_index = index;
-                child_index = 2*parent_index + 1; // move down to next level 
+                child_index = 2*parent_index + 1;
             }
         }
     }
 
-    // don't really need to keep converting between column, row and single number
+    /**
+     * Implemented through a priority first search which prioritises lower brightness pixels. 
+     * @param image The greyscale image as defined above
+     * @param ur The row index of the start pixel for the path
+     * @param uc The column index of the start pixel for the path
+     * @param vr The row index of the end pixel for the path
+     * @param vc The column index of the end pixel for the path
+     * @return The minimum brightness of any path from (ur, uc) to (vr, vc)
+     */
     public int darkestPath(int[][] image, int ur, int uc, int vr, int vc) {
-        int n_pixels = image.length*image[0].length;
         int n_rows = image.length;
         int n_cols = image[0].length;
-        int[] pixel_value = new int[n_pixels];
-        int[] brightness_key = new int[n_pixels];
-        int count = 0;
-        for (int i = 0; i < n_rows; i++) {
-            for (int j = 0; j < n_cols; j++) {
-                pixel_value[count++] = image[i][j];
-            }
-        }
+        int n_pixels = n_rows*n_cols;
+        int[] brightness_key = new int[n_pixels]; // keeps track of brightest pixel each pixel has encountered thus far 
+        // (in the path starting at (ur, uc) and eventually reaching (vr, vc))
         
-        PriorityQueueBlock pqueue = new PriorityQueueBlock(n_pixels);
+        PriorityQueueHeap pqueue = new PriorityQueueHeap(n_pixels);
         for (int i = 0; i < n_pixels; i++) {
-            pqueue.enqueue(i, Integer.MAX_VALUE);
+            pqueue.enqueue(i, Integer.MAX_VALUE); // elements converted into plain numbers instead of (r,c)
             brightness_key[i] = Integer.MAX_VALUE;
         }
-        pqueue.changePriority(ur*n_cols + uc, pixel_value[ur*n_cols + uc]);
-        brightness_key[ur*n_cols + uc] = pixel_value[ur*n_cols + uc];
+        pqueue.changePriority(ur*n_cols + uc, image[ur][uc]); // starting pixel 
+        brightness_key[ur*n_cols + uc] = image[ur][uc];
 
         while (true) {
             int element = pqueue.dequeue();
-            if (element == vr*n_cols + vc) break;
-            // adding right, left, top and bottom neighbours in that order if possible
-            LinkedList<Integer> neighbours = new LinkedList<>();
-            if (element % n_cols != n_cols - 1) neighbours.add(element + 1);
+            if (element == vr*n_cols + vc) break; // (vr, vc) pixel has been fully relaxed and contains darkest path
+
+            // adding left, right, top and bottom neighbours in that order (if possible)
+            ArrayList<Integer> neighbours = new ArrayList<>();
             if (element % n_cols != 0) neighbours.add(element - 1);
+            if (element % n_cols != n_cols - 1) neighbours.add(element + 1);
             if (element / n_cols != n_rows - 1) neighbours.add(element + n_cols);
             if (element / n_cols != 0) neighbours.add(element - n_cols);
 
             for (int neighbour: neighbours) {
-                if (neighbour >= 0 && neighbour < n_pixels) {
-                    if (pqueue.contains(neighbour)) {
-                        int max_brightness = Math.max(brightness_key[element], pixel_value[neighbour]);
-                        if (max_brightness < brightness_key[neighbour]) {
-                            brightness_key[neighbour] =  max_brightness;
-                            pqueue.changePriority(neighbour, max_brightness);
-                        }
+                if (pqueue.contains(neighbour)) {
+                    // the brightest pixel encountered thus far by a neighbour is either the brightest pixel 
+                    // encountered by the current dequeued element or the brightness of the neighbour itself
+                    int max_brightness = Math.max(brightness_key[element], image[neighbour/n_cols][neighbour%n_cols]);
+                    // If the brightness is darker, this indicates a better priority. Thus perform relaxation and update pqueue 
+                    if (max_brightness < brightness_key[neighbour]) {
+                        brightness_key[neighbour] =  max_brightness;
+                        pqueue.changePriority(neighbour, max_brightness);
                     }
                 }
             }
         }
-        return brightness_key[vr*n_cols + vc];
+        return brightness_key[vr*n_cols + vc]; // contains brightness of darkest path encountered by (vr, vc) pixel
     }
 
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
