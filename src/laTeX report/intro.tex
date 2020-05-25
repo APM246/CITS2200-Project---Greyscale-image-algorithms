@@ -25,6 +25,7 @@
 	breakatwhitespace=true,
 	tabsize=3
 }
+\addtolength{\topmargin}{-.875in}
 \begin{document}
 	\maketitle
 	\newpage
@@ -127,7 +128,7 @@
        \section{Darkest Path}
        \subsection*{Correctness}
        The Darkest Path algorithm uses a Priority First Search to find the darkest path. The essence of the 
-       search is based on one property. The brightness of a path is defined by the brightest pixel it contains. Therefore, when examining a new pixel to add to the path, there are two possible outcomes. Either the pixel redefines the path's brightest pixel by being brighter than the brightest pixel encountered thus far or the pixel joins the path without affecting this property. This is seen with the conditional statement:\newline
+       search is based on one property. The brightness of a pixel (and thus path) is defined by the brightest pixel it has encountered in the path from the source to itself. This information is stored in the brightness\_key array and every update to it is based on one of two outcomes. The pixel's own brightness is the brightest it has encountered thus far or the brightest pixel in the path is. Due to the inequality $max\_brightness \lhd brightness\_key[neighbour]$, the algorithm prioritises \textbf{decreasing} the maximum brightness each pixel has encountered. \newline
        \begin{lstlisting}
        int max_brightness = Math.max(brightness_key[element], image[neighbour/n_cols][neighbour%n_cols]);
     
@@ -136,8 +137,9 @@
            pqueue.changePriority(neighbour, max_brightness);
        }
        \end{lstlisting}
-        Hence the key array in the algorithm always contains an upper bound on the lowest brightness a pixel has encountered. Due to the nature of a priority first search algorithm whereby higher priority elements (darker pixels) are dequeued first from the priority queue, the algorithm is guaranteed to construct a tree which emphasises on darkest paths. Once (vr, vc) is dequeued from the heap, 
-        its upper bound will have converged to the lowest possible value and is therefore returned. 
+		
+        Hence the brightness\_key array always contains an upper bound on the lowest brightness a pixel has encountered. Due to the nature of a priority first search algorithm, pixels are dequeued only when the upper bound has converged to the lowest possible value and thus the algorithm is guaranteed to construct a search tree which emphasises on darkest paths. As a result once (vr, vc) is dequeued from the heap, 
+        its value in the brightness\_key array will be the brightness of the darkest path from (ur, uc) to (vr, vc). 
 
         \newpage   
        \section{Appendix}
