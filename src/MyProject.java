@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
+import tests.BrightestPixelsTest;
+
 /**
  * Class that implements the 4 algorithms outlined in the Project interface
  */
@@ -329,44 +331,77 @@ public class MyProject implements Project {
         // Start by assigning elements of row as leaves
         // rename variables 
         public BinaryTree(int[] row) {
-            size = row.length;
-            if (logBase2(size) != (int) logBase2(size)) size = (int) Math.pow(2, 1 + ((int) logBase2(size)));
-            heap = new int[2*size - 1][3];
+            int n_leafs = row.length;
+            if (logBase2(n_leafs) != (int) logBase2(n_leafs)) size = (int) Math.pow(2, 1 + ((int) logBase2(n_leafs)));
+            else n_leafs = row.length;
+
+            size = 2*n_leafs - 1;
+            heap = new int[size][3];
             Arrays.fill(heap, new int[] {0,0,0});
-            for (int i = row.length - 1; i >= 0; i--) heap[i] = new int[] {row[i], i, i};
-            constructTree(row.length);
+            int row_index = row.length - 1;
+            for (int i = size - 1; i >= size - row.length; i--) {
+                heap[i] = new int[] {row[row_index], row_index, row_index};
+                row_index--;
+            }
+            constructTree(n_leafs);
         }
 
         private double logBase2(int number) {return Math.log(number)/Math.log(2);}
 
-        private void constructTree(int n_cols) {
-            int n_elements = n_cols;
+        private void constructTree(int n_leafs) {
+            int n_elements = n_leafs;
             int end = size;
             for (int i = 0; i < logBase2(size); i++) {
                 end -= n_elements;
                 n_elements /= 2;
-                for (int j = end - 1; j >= end - n_elements; j -= 2) {
-                    heap[j] = new int[] {Math.max(heap[2*j + 1][0], heap[2*j + 2][0]), , };
+                for (int j = end - 1; j >= end - n_elements && j >= 0; j--) {
+                    heap[j] = new int[] {Math.max(heap[2*j + 1][0], heap[2*j + 2][0]), heap[2*j + 1][1], heap[2*j + 2][2]};
                 }
             }
         }
 
+        public void printHeap() {
+            for (int[] i: heap) {
+                System.out.println(Arrays.toString(i));
+            }
+        }
+
+        public int[][] getHeap() {
+            return heap;
+        }
+
+    }
+
+    private int findMaximum(int node, int left, int right, int[][] tree) {
+        if (left == tree[node][1] && right - 1 == tree[node][2]) return tree[node][0];
+        else if (tree[node][2] < left || tree[node][1] >= right) return -1;
+        else if (tree[node][1] == tree[node][2]) return tree[node][0];
+        else return Math.max(findMaximum(2*node + 1, left, right, tree), findMaximum(2*node + 2, left, right, tree));
     }
 
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
         int[] result = new int[queries.length]; 
-        for (int j = 0; j < queries.length; j++) {
-            int max = 0;
-            int row = queries[j][0];
-            int left = queries[j][1];
-            int right = queries[j][2];
-            // finds maximum element in row segment 
-            for (int i = left; i < right; i++) {
-                if (image[row][i] > max) max = image[row][i];
-            }
-            result[j] = max; // maximum element appended to result array
+        int[][][] bintrees = new int[image.length][][];
+        for (int i = 0; i < image.length; i++) {
+            BinaryTree bintree = new BinaryTree(image[i]);
+            bintrees[i] = bintree.getHeap();
+            //bintree.printHeap();
+        }
+        
+        for (int i = 0; i < queries.length; i++) {
+            int row = queries[i][0];
+            int left = queries[i][1];
+            int right = queries[i][2];
+            result[i] = findMaximum(0, left, right, bintrees[row]);
         }
 
         return result;
+    }
+
+    public static void main(String[] args) 
+    {
+        int[][] image = {{25, 2, 7, 9, 3, 6, 1, 0}};
+        int[] result = new MyProject().brightestPixelsInRowSegments(image, new int[][] {{0, 4, 5}});
+        System.out.println(Arrays.toString(result));
     }
 }
