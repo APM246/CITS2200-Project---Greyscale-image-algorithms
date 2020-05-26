@@ -332,8 +332,7 @@ public class MyProject implements Project {
         // rename variables 
         public BinaryTree(int[] row) {
             int n_leafs = row.length;
-            if (logBase2(n_leafs) != (int) logBase2(n_leafs)) size = (int) Math.pow(2, 1 + ((int) logBase2(n_leafs)));
-            else n_leafs = row.length;
+            if (logBase2(n_leafs) != (int) logBase2(n_leafs)) n_leafs = (int) Math.pow(2, 1 + ((int) logBase2(n_leafs)));
 
             size = 2*n_leafs - 1;
             heap = new int[size][3];
@@ -385,7 +384,6 @@ public class MyProject implements Project {
         for (int i = 0; i < image.length; i++) {
             BinaryTree bintree = new BinaryTree(image[i]);
             bintrees[i] = bintree.getHeap();
-            //bintree.printHeap();
         }
         
         for (int i = 0; i < queries.length; i++) {
@@ -400,8 +398,9 @@ public class MyProject implements Project {
 
     public static void main(String[] args) 
     {
-        int[][] image = {{25, 2, 7, 9, 3, 6, 1, 0}};
-        int[] result = new MyProject().brightestPixelsInRowSegments(image, new int[][] {{0, 4, 5}});
+        int[][] image = {{25, 2, 7, 9, 3, 6, 1, 0}, {25, 2, 700, 701, 340, 60, 120}};
+        int[][] queries = {{0, 4, 5}, {1,0,5}};
+        int[] result = new MyProject().brightestPixelsInRowSegments(image, queries);
         System.out.println(Arrays.toString(result));
     }
 }
