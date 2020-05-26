@@ -189,7 +189,8 @@ public class MyProject implements Project {
 
         /**
          * Adds an element to the priority queue. Enqueue is only called once to construct
-         * the priority queue and thus heapify() is not needed here. 
+         * the priority queue (when all priorities are set to infinity) and thus heapify() is not needed
+         * here. 
          * @param element the element to be added
          * @param priority the priority (brightness) of the element 
          */
@@ -295,7 +296,7 @@ public class MyProject implements Project {
 
         while (true) {
             int element = pqueue.dequeue();
-            if (element == vr*n_cols + vc) break; // (vr, vc) pixel has been fully relaxed and contains darkest path
+            if (element == vr*n_cols + vc) break; // (vr, vc) pixel has been dequeued and contains darkest path
 
             // adding left, right, top and bottom neighbours in that order (if possible)
             ArrayList<Integer> neighbours = new ArrayList<>();

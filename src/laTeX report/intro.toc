@@ -1,4 +1,5 @@
 \contentsline {section}{\numberline {1}FloodFill Count}{3}%
 \contentsline {section}{\numberline {2}Brightest Square}{4}%
 \contentsline {section}{\numberline {3}Darkest Path}{6}%
-\contentsline {section}{\numberline {4}Appendix}{7}%
+\contentsline {section}{\numberline {4}Brightest Pixels in Row Segments}{7}%
+\contentsline {section}{\numberline {5}Appendix}{8}%

@@ -43,7 +43,7 @@
     
     The algorithm does take into account the scenario where the starting pixel is black, in which case 0 is immediately returned.
     
-    \subsection*{Time Complexity Analysis}
+    \subsection*{Time Complexity}
     The algorithm first creates an empty stack and pushes the original pixel onto it. The algorithm then uses a while loop to perform the depth-first search, stopping when the stack becomes empty. For every iteration of the while loop, the current pixel's 4 neighbours are examined with array accesses and count is incremented by 1. Let these constant time operations be denoted by the variable c. In the worst-case scenario, every pixel in the image matches the brightness of the original pixel and thus the stack will remain non-empty until every pixel in the image is examined. In other words, the while loop will have to execute p times to examine each pixel.
 	\begin{equation}
 		\begin{aligned}
@@ -78,7 +78,7 @@
        
        The algorithm is correct because it works under the same principle as a brute force solution, i.e. it finds the sum of every possible k*k square and returns the largest sum.
        
-       \subsection*{Time Complexity Analysis}
+       \subsection*{Time Complexity}
        The algorithm is broken down into 2 main parts, calculating row\_sums and calculating the sums of every possible square. The first stage is as follows: \newline
        \begin{lstlisting}
        	for (int i = 0; i < n_rows; i++) {
@@ -141,6 +141,26 @@
         Hence the brightness\_key array always contains an upper bound on the lowest brightness a pixel has encountered. Due to the nature of a priority first search algorithm, pixels are dequeued only when the upper bound has converged to the lowest possible value and thus the algorithm is guaranteed to construct a search tree which emphasises on darkest paths. As a result once (vr, vc) is dequeued from the heap, 
         its value in the brightness\_key array will be the brightness of the darkest path from (ur, uc) to (vr, vc). 
 
+		\subsection*{Time Complexity}
+		Note: The height of a balanced binary tree is log n if there are n elements. 
+		
+		The priority first search is broken down into two main operations, dequeueing and updating the brightness\_key array. Each dequeue of a pixel from the priority queue is followed by a heapifyDown() operation, which ensures the heap property is still maintained. This is O(log p) in the worst case when the top element is continuously switched with the element below until it reaches the bottom of the heap. For each pixel that is dequeued, its 4 pixel neighbours (left, right, top and bottom in worst case) are examined. If a pixel's brightness\_key is updated, this requires a heapifyUp() operation which also restores the heap property. This is O(log p) in the worst-case scenario if an element at the lowest level is brough to the top of the tree.
+		
+		Hence, dequeueing and updating the key array are both O(log p) operations for a single pixel. In the overall worst case scenario, every pixel will be dequeued and every neighbour will have its priority be updated before (vr, vc) is dequeued and the algorithm stops. Therefore the following time complexity is achieved:
+		
+		\begin{equation}
+		\begin{aligned}
+		time &= \text{all pixels dequeued} + \text{all neighbours } (4 \times p) \text{ updated}\\
+		     &= p \times log p + 4p \times log p\\
+		     &= 5p \times log p\\
+		     &= \textbf{O(p log p)}
+		\end{aligned}
+		\end{equation}\newline 
+		
+		\section{Brightest Pixels in Row Segments}
+		\subsection*{Correctness}
+		
+
         \newpage   
        \section{Appendix}
        \begin{thebibliography}{9}
@@ -148,6 +168,9 @@
     	GeeksforGeeks A computer science portal for geeks
     	\\\texttt{https://www.geeksforgeeks.org/print-maximum-sum-square-sub-matrix
     	-of-given-size/}
+    	\bibitem{Stack Exchange} Software Engineering Stack Exchange 
+    	\\\texttt{https://softwareengineering.stackexchange.com/questions/197016/
+    	retrieving-maximum-value-from-a-range-in-unsorted-array}
        	\end{thebibliography}
        
      \end{flushleft}
