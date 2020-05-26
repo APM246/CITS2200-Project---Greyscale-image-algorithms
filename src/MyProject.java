@@ -321,6 +321,38 @@ public class MyProject implements Project {
         return brightness_key[vr*n_cols + vc]; // contains brightness of darkest path encountered by (vr, vc) pixel
     }
 
+    private class BinaryTree {
+        // each subarray stores the number and the range in which it happens to be the maximum number  
+        private int[][] heap;
+        private int size;
+
+        // Start by assigning elements of row as leaves
+        // rename variables 
+        public BinaryTree(int[] row) {
+            size = row.length;
+            if (logBase2(size) != (int) logBase2(size)) size = (int) Math.pow(2, 1 + ((int) logBase2(size)));
+            heap = new int[2*size - 1][3];
+            Arrays.fill(heap, new int[] {0,0,0});
+            for (int i = row.length - 1; i >= 0; i--) heap[i] = new int[] {row[i], i, i};
+            constructTree(row.length);
+        }
+
+        private double logBase2(int number) {return Math.log(number)/Math.log(2);}
+
+        private void constructTree(int n_cols) {
+            int n_elements = n_cols;
+            int end = size;
+            for (int i = 0; i < logBase2(size); i++) {
+                end -= n_elements;
+                n_elements /= 2;
+                for (int j = end - 1; j >= end - n_elements; j -= 2) {
+                    heap[j] = new int[] {Math.max(heap[2*j + 1][0], heap[2*j + 2][0]), , };
+                }
+            }
+        }
+
+    }
+
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
         int[] result = new int[queries.length]; 
         for (int j = 0; j < queries.length; j++) {
