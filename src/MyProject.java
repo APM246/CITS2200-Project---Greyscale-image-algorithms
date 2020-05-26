@@ -322,16 +322,17 @@ public class MyProject implements Project {
     }
 
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
-        int[] result = new int[queries.length];
+        int[] result = new int[queries.length]; 
         for (int j = 0; j < queries.length; j++) {
             int max = 0;
             int row = queries[j][0];
             int left = queries[j][1];
             int right = queries[j][2];
+            // finds maximum element in row segment 
             for (int i = left; i < right; i++) {
                 if (image[row][i] > max) max = image[row][i];
             }
-            result[j] = max;
+            result[j] = max; // maximum element appended to result array
         }
 
         return result;
