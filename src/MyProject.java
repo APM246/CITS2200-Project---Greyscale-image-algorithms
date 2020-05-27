@@ -323,33 +323,56 @@ public class MyProject implements Project {
         return brightness_key[vr*n_cols + vc]; // contains brightness of darkest path encountered by (vr, vc) pixel
     }
 
+    /**
+     * Specific implementation of a Binary tree where each node is the maximum of its two children. The root of the 
+     * binary tree is the maximum of all elements in the row. 
+     */
     private class BinaryTree {
-        // each subarray stores the number and the range in which it happens to be the maximum number  
+        // each subarray stores 3 elements, the number and the range of the original subarray
+        // in which it happens to be the maximum number
         private int[][] heap;
-        private int size;
+        private int size; // number of elements in heap
 
-        // Start by assigning elements of row as leaves
-        // rename variables 
+        /**
+         * Creates a Binary tree representing a row of numbers.
+         * Start by assigning elements of original row as leaves 
+         * @param row the row to convert into a binary tree 
+         */
         public BinaryTree(int[] row) {
             int n_leafs = row.length;
+            // if n_leafs is not a power of 2, add 0s until it is
             if (logBase2(n_leafs) != (int) logBase2(n_leafs)) n_leafs = (int) Math.pow(2, 1 + ((int) logBase2(n_leafs)));
 
-            size = 2*n_leafs - 1;
+            size = 2*n_leafs - 1; // number of elements in binary tree 
             heap = new int[size][3];
             Arrays.fill(heap, new int[] {0,0,0});
             int row_index = row.length - 1;
+            // fill end of heap with leafs. heap[0] represents root of entire heap. 
             for (int i = size - 1; i >= size - row.length; i--) {
-                heap[i] = new int[] {row[row_index], row_index, row_index};
+                heap[i] = new int[] {row[row_index], row_index, row_index}; // row[i] element is the maximum in range {i,i}
                 row_index--;
             }
-            constructTree(n_leafs);
+            constructTree(n_leafs); // populate rest of tree
         }
 
+        /**
+         * Finds the logarithm of a number to the base 2
+         * @param number any number 
+         * @return the logarithm to the base 2
+         */
         private double logBase2(int number) {return Math.log(number)/Math.log(2);}
 
+        /**
+         * Populates the rest of the tree nodes (non-leafs) by taking the maximum of its two children. The heap
+         * stores the range of the subarray in which it is the maximum number by taking the left index of its left child's range
+         * and the right index of its right child's range. 
+         * @param n_leafs the number of leafs in the binary tree 
+         */
         private void constructTree(int n_leafs) {
             int n_elements = n_leafs;
             int end = size;
+            // there are logBase2(size) + 1 levels in the tree. The outer loop determines the level to populate
+            // and the inner loop populates it
             for (int i = 0; i < logBase2(size); i++) {
                 end -= n_elements;
                 n_elements /= 2;
@@ -358,34 +381,56 @@ public class MyProject implements Project {
                 }
             }
         }
-
-        public void printHeap() {
-            for (int[] i: heap) {
-                System.out.println(Arrays.toString(i));
-            }
-        }
-
+    
+        /**
+         * returns the Binary tree heap representing the row of numbers 
+         * @return
+         */
         public int[][] getHeap() {
             return heap;
         }
 
     }
 
+    /**
+     * A recursive method which finds the maximum element in a given range of an array using
+     * a Binary tree representation of the array. In each call, the method checks if the currently
+     * examined node's range (in which it is the maximum element) matches the range specified by 
+     * the query. 
+     * @param node the current node being examined 
+     * @param left the left index of the range
+     * @param right the right index of the range
+     * @param tree the tree representation of the array 
+     * @return the maximum element in the range 
+     */
     private int findMaximum(int node, int left, int right, int[][] tree) {
+        // range covered by node exactly matches specified range
         if (left == tree[node][1] && right - 1 == tree[node][2]) return tree[node][0];
+        // range covered by node is out of bounds
         else if (tree[node][2] < left || tree[node][1] >= right) return -1;
+        // node is a leaf, thus return leaf's value
         else if (tree[node][1] == tree[node][2]) return tree[node][0];
+        // node does not exactly match specified range and thus check if its children do 
         else return Math.max(findMaximum(2*node + 1, left, right, tree), findMaximum(2*node + 2, left, right, tree));
     }
 
+    /**
+     * Calculates the brightest pixel in each query row segment by creating a binary/segment tree
+     * representation of the row and using a recursive divide and conquer algorithm 
+     * @param image The greyscale image
+     * @param queries The list of query row segments
+     * @return The list of brightest pixels for each query row segment
+     */
     public int[] brightestPixelsInRowSegments(int[][] image, int[][] queries) {
         int[] result = new int[queries.length]; 
         int[][][] bintrees = new int[image.length][][];
+        // stores binary/segment tree for each row in bintrees 
         for (int i = 0; i < image.length; i++) {
             BinaryTree bintree = new BinaryTree(image[i]);
             bintrees[i] = bintree.getHeap();
         }
         
+        // Uses divide and conquer algorithm to find maximum and stores answer in result[]
         for (int i = 0; i < queries.length; i++) {
             int row = queries[i][0];
             int left = queries[i][1];
@@ -394,13 +439,5 @@ public class MyProject implements Project {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) 
-    {
-        int[][] image = {{25, 2, 7, 9, 3, 6, 1, 0}, {25, 2, 700, 701, 340, 60, 120}};
-        int[][] queries = {{0, 4, 5}, {1,0,5}};
-        int[] result = new MyProject().brightestPixelsInRowSegments(image, queries);
-        System.out.println(Arrays.toString(result));
     }
 }
