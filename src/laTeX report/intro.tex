@@ -161,42 +161,39 @@
 		
 		\section{Brightest Pixels in Row Segments}
 		\subsection*{Correctness}
-		The algorithm makes use of a Binary tree in which every node stores the maximum of its two children. If this is repeated at every level until the root is created, then effectively each node stores the maximum element of a particular range of the array. This is demonstrated in the diagram.\newline
+		The algorithm makes use of a Binary tree in which every node stores the maximum of its two children. If this is repeated at every level until the root is created, then effectively each node stores the maximum element of a particular range of the array. This is demonstrated in the following diagram.\newline
 		
-		original row = [25,2,7,9,3,6]\newline
+		original array = [25,2,7,9,3,6]
 	
-		\begin{tikzpicture}[level distance=1.0cm,
-		level 1/.style={sibling distance=3cm},
-		level 2/.style={sibling distance=1.5cm},
-		level 3/.style={sibling distance=1cm}]
-		\node {25 (0,7)}
-		child {node {25 (0,3)}
-			child {node {25}
-				child {node {25}}
-				child {node {2}}
+		\begin{tikzpicture}[level distance=2cm,
+		level 1/.style={sibling distance=7cm},
+		level 2/.style={sibling distance=3.5cm},
+		level 3/.style={sibling distance=1.6cm}]
+		\node {25 (0,5)}
+		child {node {25 (0,1)}
+			child {node {0 (0,0)}
+				child {node {0 (0,0)}}
+				child {node {0 (0,0)}}
 			}
-			child {node {9} 
-				child {node {7}}
-				child {node {9}}
+			child {node {25 (0,1)} 
+				child {node {25 (0,0)}}
+				child {node {2 (1,1)}}
 			}
 		}
-		child {node {6 (4,7)}
-			child {node {6}
-				child {node {3}}
-				child {node {6}}}
-			child {node {0}
-				child {node {0}}
-				child {node {0}}
+		child {node {9 (2,5)}
+			child {node {9 (2,3)}
+				child {node {7 (2,2)}}
+				child {node {9 (3,3)}}}
+			child {node {6 (4,5)}
+				child {node {3 (4,4)}}
+				child {node {6 (5,5)}}
 			}
 		};
 		\end{tikzpicture}
+		The 2-tuples next to each number denote the particular range of the array in which the node's value
+		is the maximum element. Note that for an array whose length is not equal to $2^n$ (for some integer n), zeroes are added to the front of the array. This allows the algorithm to work and does not incorrectly change the results
+		of any queries. The range of each node does not take into account the added zeroes (e.g. the root has range (0,5) which covers the 6 elements of the original array).  
 		
-		%\begin{tabular}{c c c c c c c c}
-		%	                25\\
-	 	 %   25 & 9\\	             
-			
-		%	25 & 2 & 7 & 9 & 3 & 6 & 1 & 0\\	
-		%\end{tabular}
 		
 		
 		
