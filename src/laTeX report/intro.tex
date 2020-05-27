@@ -203,9 +203,38 @@
 		5) Recursively call the function on the node's two children and return the maximum of the two calls\newline
 		
 		Through this approach, the algorithm checks if a node's range matches the query and if not attempts to do so on
-		its children. In the more common situation that no node perfectly matches the range, a number of nodes whose combined ranges match the query's range are compared and their maximum value returned. The base cases from 2 - 4 allow this to occur. For example, if a query for the row specified above is {0, 1, 4}, the recursive calls would occur in the following order as specified by the numbers in the square brackets. 
+		its children. In the more common situation that no node perfectly matches the range, a number of nodes whose combined ranges match the query's range are compared and their maximum value returned. The base cases from 2 - 4 allow this to occur. For example, if a query for the row specified above is \{0, 1, 4\}, the recursive calls would occur in the following order as specified by the numbers in the square brackets. 
 		
+		\begin{tikzpicture}[level distance=2cm,
+		level 1/.style={sibling distance=8.6cm},
+		level 2/.style={sibling distance=4.4cm},
+		level 3/.style={sibling distance=2.1cm}]
+		\node {25 (0,5) [1]}
+		child {node {25 (0,1) [2]}
+			child {node {0 (0,0) [3]}
+				child {node {0 (0,0)}}
+				child {node {0 (0,0)}}
+			}
+			child {node {25 (0,1) [4]} 
+				child {node {25 (0,0) [5]}}
+				child {node {2 (1,1) [6]}}
+			}
+		}
+		child {node {9 (2,5) [7]}
+			child {node {9 (2,3) [8]}
+				child {node {7 (2,2)}}
+				child {node {9 (3,3)}}}
+			child {node {6 (4,5) [9]}
+				child {node {3 (4,4)}}
+				child {node {6 (5,5)}}
+			}
+		};
+		\end{tikzpicture}
 		
+		When the function eventually climbs back out from its recursion, the values 2 and 9 are compared, leading to a
+		returned answer of 9. 
+		
+		\subsection*{Time and Space Complexity Analysis}
 		
 
         \newpage 
