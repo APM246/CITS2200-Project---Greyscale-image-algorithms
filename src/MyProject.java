@@ -12,7 +12,6 @@ import java.util.Stack;
  * Class that implements the 4 algorithms outlined in the Project interface
  */
 public class MyProject implements Project {
-
     /**
      * Creates an instance of MyProject that can execute the 4 algorithms
      */
@@ -405,7 +404,7 @@ public class MyProject implements Project {
         // range covered by node exactly matches specified range
         if (left == tree[node][1] && right - 1 == tree[node][2]) return tree[node][0];
         // if node's range is subset of query range, return node value
-        else if (tree[node][1] > left && tree[node][2] < right) return tree[node][0];
+        else if (tree[node][1] >= left && tree[node][2] < right) return tree[node][0];
         // range covered by node is out of bounds
         else if (tree[node][2] < left || tree[node][1] >= right) return -1;
         // node is a leaf, thus return leaf's value
@@ -429,7 +428,7 @@ public class MyProject implements Project {
             BinaryTree bintree = new BinaryTree(image[i]);
             bintrees[i] = bintree.getHeap();
         }
-        
+
         // Uses divide and conquer algorithm to find maximum and stores answer in result[]
         for (int i = 0; i < queries.length; i++) {
             int row = queries[i][0];
@@ -437,7 +436,7 @@ public class MyProject implements Project {
             int right = queries[i][2];
             result[i] = findMaximum(0, left, right, bintrees[row]);
         }
-
+        
         return result;
     }
 }

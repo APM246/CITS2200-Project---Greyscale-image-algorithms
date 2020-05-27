@@ -192,9 +192,18 @@
 		\end{tikzpicture}
 		The 2-tuples next to each number denote the particular range of the array in which the node's value
 		is the maximum element. Note that for an array whose length is not equal to $2^n$ (for some integer n), zeroes are added to the front of the array. This allows the algorithm to work and does not incorrectly change the results
-		of any queries. The range of each node does not take into account the added zeroes (e.g. the root has range (0,5) which covers the 6 elements of the original array).  
+		of any queries. The range of each node does not take into account the added zeroes (e.g. the root has range (0,5) which covers the 6 elements of the original array).\newline
 		
+		Once a binary tree or segment tree is constructed from a row, queries can be solved using a recursive divide and conquer algorithm. With each call of the function, one of 5 outcomes (4 base case + 1 recursive call) occurs:\newline
 		
+		1) The range specified by the query exactly matches the range of the node, thus return the node's element\\
+		2) The range of the node is a subset of the range specified by the query, thus return the node's element\\
+		3) The range of the node fully falls outside the range specified by the query, thus return -1\\
+		4) The range of the node covers 1 index, thus return the node's value\\
+		5) Recursively call the function on the node's two children and return the maximum of the two calls\newline
+		
+		Through this approach, the algorithm checks if a node's range matches the query and if not attempts to do so on
+		its children. In the more common situation that no node perfectly matches the range, a number of nodes whose combined ranges match the query's range are compared and their maximum value returned. The base cases from 2 - 4 allow this to occur. For example, if a query for the row specified above is {0, 1, 4}, the recursive calls would occur in the following order as specified by the numbers in the square brackets. 
 		
 		
 		
