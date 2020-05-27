@@ -58,29 +58,29 @@ public class Test {
         //testPriorityQueue();
         // for (int[] wow: bintree.getHeap()) System.out.println(Arrays.toString(wow));
         Random random = new Random();
-        int num_elements = 200;
-        int num_rows = 200;
-        int num_queries = 50000000;
-        int[][] image = new int[num_rows][num_elements];
+        int num_columns = 200000;
+        int num_rows = 2000;
+        int num_queries = 5000;
+        int[][] image = new int[num_rows][num_columns];
         int[][] queries = new int[num_queries][3];
         for (int j = 0; j < num_rows; j++) {
-            for (int i = 0; i < num_elements; i++) image[j][i] = random.nextInt(2560); 
+            for (int i = 0; i < num_columns; i++) image[j][i] = random.nextInt(2560); 
         }
 
         for (int i = 0; i < num_queries; i++) {
             int num1 = 0;
             int num2 = -1;
             while (num1 > num2) {
-                num1 = random.nextInt(num_elements);
-                num2 = random.nextInt(num_elements);
+                num1 = random.nextInt(num_columns);
+                num2 = random.nextInt(num_columns);
             }
             queries[i] = new int[] {random.nextInt(num_rows), num1, num2};
         }
 
         long start = System.currentTimeMillis();
-        int answer1 = new MyProject().brightestPixelsInRowSegments(image, new int[][] {{0,4534,image[0].length}})[0];
+        int answer1 = new MyProject().brightestPixelsInRowSegments(image, queries)[0];
         System.out.println((System.currentTimeMillis() - start)/1000 + " seconds");
-        int answer2 = yikes(image, new int[][] {{0,4534,image[0].length}})[0];
+        int answer2 = yikes(image, queries)[0];
         System.out.println("Answer is " + answer1 + ", " + answer2);
     }
 }

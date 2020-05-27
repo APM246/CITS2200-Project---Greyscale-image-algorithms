@@ -8,13 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
-import tests.BrightestPixelsTest;
-
 /**
  * Class that implements the 4 algorithms outlined in the Project interface
  */
 public class MyProject implements Project {
-    private int call_count;
 
     /**
      * Creates an instance of MyProject that can execute the 4 algorithms
@@ -405,7 +402,6 @@ public class MyProject implements Project {
      * @return the maximum element in the range 
      */
     private int findMaximum(int node, int left, int right, int[][] tree) {
-        call_count++;
         // range covered by node exactly matches specified range
         if (left == tree[node][1] && right - 1 == tree[node][2]) return tree[node][0];
         // if node's range is subset of query range, return node value
@@ -439,9 +435,7 @@ public class MyProject implements Project {
             int row = queries[i][0];
             int left = queries[i][1];
             int right = queries[i][2];
-            call_count = 0;
             result[i] = findMaximum(0, left, right, bintrees[row]);
-            //System.out.println(call_count + " calls vs " + image[row].length + " columns and log C = " + Math.log(image[row].length)/Math.log(2));
         }
 
         return result;
