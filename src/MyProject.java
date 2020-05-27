@@ -14,6 +14,7 @@ import tests.BrightestPixelsTest;
  * Class that implements the 4 algorithms outlined in the Project interface
  */
 public class MyProject implements Project {
+    private int call_count;
 
     /**
      * Creates an instance of MyProject that can execute the 4 algorithms
@@ -404,13 +405,16 @@ public class MyProject implements Project {
      * @return the maximum element in the range 
      */
     private int findMaximum(int node, int left, int right, int[][] tree) {
+        call_count++;
         // range covered by node exactly matches specified range
         if (left == tree[node][1] && right - 1 == tree[node][2]) return tree[node][0];
+        // if node's range is subset of query range, return node value
+        else if (tree[node][1] >= left && tree[node][2] <= right) return tree[node][0];
         // range covered by node is out of bounds
         else if (tree[node][2] < left || tree[node][1] >= right) return -1;
         // node is a leaf, thus return leaf's value
         else if (tree[node][1] == tree[node][2]) return tree[node][0];
-        // node does not exactly match specified range and thus check if its children do 
+        // node does not exactly match specified range and thus check if its children do (find maximum of both)
         else return Math.max(findMaximum(2*node + 1, left, right, tree), findMaximum(2*node + 2, left, right, tree));
     }
 
@@ -435,7 +439,9 @@ public class MyProject implements Project {
             int row = queries[i][0];
             int left = queries[i][1];
             int right = queries[i][2];
+            call_count = 0;
             result[i] = findMaximum(0, left, right, bintrees[row]);
+            System.out.println(call_count + " calls vs " + image[row].length + " columns and log C = " + Math.log(image[row].length)/Math.log(2));
         }
 
         return result;

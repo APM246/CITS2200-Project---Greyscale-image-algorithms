@@ -26,6 +26,8 @@
 	tabsize=3
 }
 \addtolength{\topmargin}{-.875in}
+\usepackage{tikz}
+\usetikzlibrary{trees}
 \begin{document}
 	\maketitle
 	\newpage
@@ -159,18 +161,55 @@
 		
 		\section{Brightest Pixels in Row Segments}
 		\subsection*{Correctness}
-		The algorithm makes use of a Binary tree in which every node stores the maximum of its two children. If this is repeated at every level until the root is created, then each node stores the maximum element of a particular range of the array. This is demonstrated in the diagram. 
+		The algorithm makes use of a Binary tree in which every node stores the maximum of its two children. If this is repeated at every level until the root is created, then effectively each node stores the maximum element of a particular range of the array. This is demonstrated in the diagram.\newline
+		
+		original row = [25,2,7,9,3,6]\newline
+	
+		\begin{tikzpicture}[level distance=1.0cm,
+		level 1/.style={sibling distance=3cm},
+		level 2/.style={sibling distance=1.5cm},
+		level 3/.style={sibling distance=1cm}]
+		\node {25 (0,7)}
+		child {node {25 (0,3)}
+			child {node {25}
+				child {node {25}}
+				child {node {2}}
+			}
+			child {node {9} 
+				child {node {7}}
+				child {node {9}}
+			}
+		}
+		child {node {6 (4,7)}
+			child {node {6}
+				child {node {3}}
+				child {node {6}}}
+			child {node {0}
+				child {node {0}}
+				child {node {0}}
+			}
+		};
+		\end{tikzpicture}
+		
+		%\begin{tabular}{c c c c c c c c}
+		%	                25\\
+	 	 %   25 & 9\\	             
+			
+		%	25 & 2 & 7 & 9 & 3 & 6 & 1 & 0\\	
+		%\end{tabular}
+		
+		
 		
 		
 
-        \newpage   
+        \newpage 
        \section{Appendix}
        \begin{thebibliography}{9}
-    	\bibitem{geeksforgeeks} 
+    	\bibitem{geeksforgeeks1} 
     	GeeksforGeeks A computer science portal for geeks
     	\\\texttt{https://www.geeksforgeeks.org/print-maximum-sum-square-sub-matrix
     	-of-given-size/}
-    	\bibitem{geeksforgeeks} GeeksforGeeks A computer science portal for geeks
+    	\bibitem{geeksforgeeks2} GeeksforGeeks A computer science portal for geeks
     	\\\texttt{https://www.geeksforgeeks.org/segment-tree-set-2-range-maximum-query-node
     	-update/}
        	\end{thebibliography}
