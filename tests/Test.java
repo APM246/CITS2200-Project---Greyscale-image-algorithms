@@ -58,9 +58,9 @@ public class Test {
         //testPriorityQueue();
         // for (int[] wow: bintree.getHeap()) System.out.println(Arrays.toString(wow));
         Random random = new Random();
-        int num_columns = 20000;
-        int num_rows = 2000;
-        int num_queries = 90;
+        int num_columns = 129;
+        int num_rows = 20;
+        int num_queries = 10;
         int[][] image = new int[num_rows][num_columns];
         int[][] queries = new int[num_queries][3];
         for (int j = 0; j < num_rows; j++) {
