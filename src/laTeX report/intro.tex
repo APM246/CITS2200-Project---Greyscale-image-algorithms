@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
-\author{Arun Muthu}
+\author{Arun Muthu (22704805)}
 \title{CITS2200 Project Report}
+\date{}
 \usepackage{amsmath}
 \usepackage[big]{titlesec}
 \usepackage{listings}
@@ -240,12 +241,12 @@
 		
 		Populating an index in the heap (besides the original elements of the row) is a constant time operation that requires taking the maximum of two children and combining their ranges. As calculated there are 4C-5 nodes in the worst case, meaning populating the heap takes O(C) time. A Binary tree has to be constructed for each row, and hence the overall time taken to set the algorithm up is $O(R \times C)$ = O(P)\newline
 		
-		Furthermore, one call of findMaximum() is a constant time operation that compares numbers and optionally performs recursion. Recursion enables the algorithm to check nodes at lower levels of the tree. In the worst case, the recursive calls will reach the lowest level of the tree. The height of a balanced binary tree is O(log(4C-5)), and therefore there are O(log C) levels of recursion in the worst case. At each level of recursion (each level of the tree), only several calls of findMaximum() are made (empirical analysis shows this to be a maximum of 4). This means there are $4 \times log  C$ function calls made per query. This process must occur for every query, leading to a time complexity of $O(Q \times 4 log C) = O(Q log C).$\newline
+		Furthermore, one call of findMaximum() is a constant time operation that compares numbers and optionally performs recursion. Recursion enables the algorithm to check nodes at lower levels of the tree. In the worst case, the recursive calls will reach the lowest level of the tree. The height of a balanced binary tree is $O(log(4C-5))$, and therefore there are $O(log C)$ levels of recursion in the worst case. At each level of recursion (each level of the tree), only several calls of findMaximum() are made (empirical analysis shows this to be a maximum of 4). This means there are $4 \times log  C$ function calls made per query. This process must occur for every query, leading to a time complexity of $O(Q \times 4 log C) = O(Q log C).$\newline
 		
 		The total time complexity is O(P + Q log C)
 		
 		\subsubsection*{Space Complexity}
-		Each binary tree requires O(4C-5) nodes, with each node storing 3 values. There are R binary trees in total, one for each row. Consequently the space complexity of the algorithm is $O(R \times (4C-5) \times 3) = O(P)$. 
+		Each binary tree requires $O(4C-5)$ nodes, with each node storing 3 values. There are R binary trees in total, one for each row. Consequently the space complexity of the algorithm is $O(R \times (4C-5) \times 3) = O(P)$. 
 
         \newpage 
        \section{Appendix}
